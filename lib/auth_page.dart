@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 String getErrorMessage(String errorCode) {
   switch (errorCode) {
@@ -77,12 +78,16 @@ class _CreateAccountWidgetState extends State<CreateAccountWidget> {
   final _passwordController = TextEditingController();
   String _errorMessage = '';
 
+  final storage = FlutterSecureStorage();
+
   Future<void> _createAccount() async {
     try {
       await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
+      await storage.write(key: 'email', value: _emailController.text);
+      await storage.write(key: 'password', value: _passwordController.text);
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = getErrorMessage(e.code);
@@ -136,12 +141,33 @@ class _SignInWidgetState extends State<SignInWidget> {
   final _passwordController = TextEditingController();
   String _errorMessage = '';
 
+  final storage = FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    // 初期化時に保存情報を読み出す
+    _loadUserCredentials();
+  }
+
+  Future<void> _loadUserCredentials() async {
+    final savedEmail = await storage.read(key: 'email');
+    final savedPassword = await storage.read(key: 'password');
+
+    if (savedEmail != null && savedPassword != null) {
+      _emailController.text = savedEmail;
+      _passwordController.text = savedPassword;
+    }
+  }
+
   Future<void> _signIn() async {
     try {
       await _auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
+      await storage.write(key: 'email', value: _emailController.text);
+      await storage.write(key: 'password', value: _passwordController.text);
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = getErrorMessage(e.code);
