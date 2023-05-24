@@ -29,8 +29,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ES Corrector',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        fontFamily: "NotoSansJP",
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: "NotoSansJP",
+      ),
       home: StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {

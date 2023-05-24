@@ -24,11 +24,11 @@ Future<String> callOpenAI(String text) async {
 
   Map<String, dynamic> body = {
     'model': 'gpt-3.5-turbo',
-    'max_tokens': 100,
-    'temperature': 0.9,
+    'max_tokens': 1000,
+    'temperature': 0.7,
     'messages': [
-      {'role': 'system', 'content': 'You are a helpful AI assistant.'},
-      {'role': 'user', 'content': text}
+      {'role': 'system', 'content': 'あなたは優秀な就活支援AIです。あなたの仕事は、提出されたエントリーシートを添削することです。与えられた情報をもとに、良い点、改善点を複数指摘し、修正案を提案してください。もし、必要な情報が含まれていない場合は、その旨を伝えてください。回答は日本語で行うこと。回答は箇条書きで行うこと。'},
+      {'role': 'user', 'content': text},
     ],
   };
 
@@ -41,7 +41,7 @@ Future<String> callOpenAI(String text) async {
   if (response.statusCode == 200) {
     var data = json.decode(response.body);
     var chatMessage = data['choices'][0]['message']['content'];
-    return Future<String>.value(chatMessage);
+    return Future<String>.value(utf8.decode(chatMessage.runes.toList()));
   } else {
     print(
         'Failed to call OpenAI API: ${response.statusCode}, ${response.body}');
