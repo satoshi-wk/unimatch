@@ -7,6 +7,7 @@ import 'firebase_options.dart';
 import 'auth_page.dart';
 import 'es_corrector_page.dart';
 import 'chat.dart';
+import 'chat_history.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
           } else {
             if (snapshot.hasData) {
               // return HomePage();
-              return const ChatRoom();
+              return ChatHistoryPage();
             } else {
               return AuthPage();
             }
